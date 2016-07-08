@@ -4,24 +4,110 @@
     <meta charset="utf-8">
     <title>Home Dashboard</title>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.4.8/d3.js"></script>
-    <script src="http://dimplejs.org/dist/dimple.v2.2.0.min.js"></script>
+    <script src="./d3.js"></script>
+    <script src="./bullet.js"></script>
+    <!-- <script src="http://dimplejs.org/dist/dimple.v2.2.0.min.js"></script> -->
+
+    <style>
+    body {
+      font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+      margin: auto;
+      padding-top: 40px;
+      position: relative;
+      width: 720px;
+    }
+
+    .bullet { font: 10px sans-serif; }
+    .bullet .marker { stroke: #000; stroke-width: 2px; }
+    .bullet .tick line { stroke: #666; stroke-width: .5px; }
+    .bullet .range.s0 { fill: #e66; }
+    .bullet .range.s1 { fill: #ee6; }
+    .bullet .range.s2 { fill: #6e6; }
+    .bullet .measure.s0 { fill: lightsteelblue; }
+    .bullet .measure.s1 { fill: steelblue; }
+    .bullet .title { font-size: 14px; font-weight: bold; }
+    .bullet .subtitle { fill: #999; }
+    </style>
 
   </head>
   <body>
     <div id="chartContainer"></div>
     <script>
-    var svg = dimple.newSvg("#chartContainer", 590, 400);
-    d3.json("http://localhost:8080", function (data) {
-      console.log(data);
-      var myChart = new dimple.chart(svg, data);
-      myChart.setBounds(20, 20, 460, 360)
-      myChart.addMeasureAxis("p", "spend");
-      var ring = myChart.addSeries("category", dimple.plot.pie);
-      ring.innerRadius = "50%";
-      myChart.addLegend(500, 20, 90, 300, "left");
-      myChart.draw();
+    var margin = {top: 5, right: 40, bottom: 20, left: 120},
+    width = 720 - margin.left - margin.right,
+    height = 50 - margin.top - margin.bottom;
+
+    var chart = d3.bullet()
+        .width(width)
+        .height(height);
+
+    d3.json("./budget.json", function (err, data) {
+      if (err) throw err;
+
+      data = formatBulletData(data);
+
+      var svg = d3.select("body").selectAll("svg")
+          .data(data)
+        .enter().append("svg")
+          .attr("class", "bullet")
+          .attr("width", width + margin.left + margin.right)
+          .attr("height", height + margin.top + margin.bottom)
+        .append("g")
+          .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
+          .call(chart);
+
+          var title = svg.append("g")
+        .style("text-anchor", "end")
+        .attr("transform", "translate(-6," + height / 2 + ")");
+
+      title.append("text")
+          .attr("class", "title")
+          .text(function(d) { return d.title; });
+
+      title.append("text")
+          .attr("class", "subtitle")
+          .attr("dy", "1.2em")
+          .text(function(d) { return d.subtitle; });
     });
+
+    function formatBulletData(data) {
+      var formattedData = [];
+      data.forEach(function(item) {
+        if (item.fixed) {
+          return;
+        }
+
+        var midBudget = item.budget * 0.5;
+        var highBudget = item.budget * 0.8;
+        var maxBudget = item.budget;
+        var daysInMonth = 31;
+        var currentDay = 8;
+        var projectedSpend = (item.spend / currentDay) * daysInMonth;
+        var lastMonthSpend = item.budget * (1 + Math.random());
+
+        formattedData.push({
+          title: item.category,
+          subtitle: "GBP£",
+          ranges: [midBudget, highBudget, maxBudget],
+          measures: [item.spend, projectedSpend],
+          markers: [lastMonthSpend]
+        })
+      });
+
+      return formattedData;
+    }
+
+    // var svg = dimple.newSvg("#chartContainer", 590, 400);
+    // d3.json("http://localhost:8080", function (data) {
+    //   console.log(data);
+    //   var myChart = new dimple.chart(svg, data);
+    //   myChart.setBounds(20, 20, 460, 360)
+    //   myChart.addMeasureAxis("p", "spend");
+    //   var ring = myChart.addSeries("category", dimple.plot.pie);
+    //   ring.innerRadius = "50%";
+    //   myChart.addLegend(500, 20, 90, 300, "left");
+    //   myChart.draw();
+    // });
 </script>
 
   </body>

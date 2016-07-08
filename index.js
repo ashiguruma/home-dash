@@ -36,13 +36,14 @@ function handleRequest(request, response){
       }, function( err, rows ){
         console.log('Read '+rows.length+' rows');
 
-        rows.forEach(function(row) {
-          data.push({
-            'category': row.category,
-            'budget': Number(row.budget.replace(/£|,/gi, '')),
-            'spend': Number(row.spend.replace(/£|,/gi, ''))
-          });
-        });
+        rows = data;
+        // rows.forEach(function(row) {
+        //   data.push({
+        //     'category': row.category,
+        //     'budget': Number(row.budget.replace(/£|,/gi, '')),
+        //     'spend': Number(row.spend.replace(/£|,/gi, ''))
+        //   });
+        // });
 
         step();
       });
