@@ -2,7 +2,7 @@ var GoogleSpreadsheet = require('google-spreadsheet');
 var async = require('async');
 var http = require('http');
 
-var doc = new GoogleSpreadsheet('1pSr6GwDHmQMpJDWvA43q9IUgkAaSt1lqbCdMYqARIA4');
+var doc = new GoogleSpreadsheet('1Y2MaePlg1WkzeoqNZ6UawLdfFzCwSM4gtsa5oDwKq7g');
 var sheet;
 var data = [];
 
@@ -36,7 +36,8 @@ function handleRequest(request, response){
       }, function( err, rows ){
         console.log('Read '+rows.length+' rows');
 
-        rows = data;
+        data = rows;
+        // rows = data;
         // rows.forEach(function(row) {
         //   data.push({
         //     'category': row.category,
@@ -48,7 +49,7 @@ function handleRequest(request, response){
         step();
       });
     },
-    function returnData() {
+    function returnData(step) {
       response.setHeader('Access-Control-Allow-Origin', 'http://localhost:8000');
       response.setHeader('content-type', 'application/json');
       response.end(JSON.stringify(data));
