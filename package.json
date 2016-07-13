@@ -4,8 +4,23 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "build": "rollup -c",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
-  "license": "MIT"
+  "license": "MIT",
+  "dependencies": {
+    "react": "^15.2.1",
+    "react-dom": "^15.2.1",
+    "react-redux": "^4.4.5",
+    "react-router": "^2.5.2",
+    "react-router-redux": "^4.0.5",
+    "redux": "^3.5.2",
+    "redux-logger": "^2.6.1",
+    "redux-thunk": "^2.1.0"
+  },
+  "devDependencies": {
+    "rollup": "^0.34.1",
+    "rollup-plugin-jsx": "^1.0.3"
+  }
 }
